@@ -49,8 +49,6 @@ class Auth:
 
         return auth_header
 
-    
-
     def current_user(self, request=None) -> TypeVar('User'):
         """ Validates current user """
         return None
