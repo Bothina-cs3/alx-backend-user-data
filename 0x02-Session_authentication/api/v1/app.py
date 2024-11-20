@@ -42,7 +42,7 @@ def forbidden(error) -> str:
     return jsonify({"error": "Forbidden"}), 403
 
 
-@ app.before_request
+@app.before_request
 def before_request() -> str:
     """ Before Request Handler
     Requests Validation
@@ -58,9 +58,13 @@ def before_request() -> str:
     if not auth.require_auth(request.path, excluded_paths):
         return
 
-    if auth.authorization_header(request) is None \
-            and auth.session_cookie(request) is None:
-        abort(401)
+    # Check for valid authorization header only if using BasicAuth
+    if isinstance(auth, BasicAuth):
+        if auth.authorization_header(request) is None:
+            abort(401)
+    else:
+        if auth.session_cookie(request) is None:
+            abort(401)
 
     current_user = auth.current_user(request)
     if current_user is None:
