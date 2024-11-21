@@ -61,11 +61,10 @@ def before_request() -> str:
     if not auth.require_auth(request.path, excluded_paths):
         return
 
-    # Check for valid authorization header only if using BasicAuth
     if isinstance(auth, BasicAuth):
         if auth.authorization_header(request) is None:
             abort(401)
-    else:
+    else:  # SessionAuth
         if auth.session_cookie(request) is None:
             abort(401)
 
